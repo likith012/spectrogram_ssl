@@ -24,7 +24,7 @@ np.random.seed(SEED)
 # for self supervised training
 if training_mode == 'ss':
     name = 'spect_det_kfold'
-    ss_wandb = wandb.init(project='pretrain_kfold',name=name,notes='have used spectrogram and time with 3 contrastive loss',save_code=True,entity='sleep-staging')
+    ss_wandb = wandb.init(project='spec_test,name=name,notes='have used spectrogram and time with 3 contrastive loss',save_code=True,entity='sleep-staging')
     config = Config(ss_wandb)
     ss_wandb.save('/home2/vivek.talwar/exps/spect//config.py')
     ss_wandb.save('/home2/vivek.talwar/exps/spect//trainer.py')

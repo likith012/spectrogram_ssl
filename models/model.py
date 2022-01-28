@@ -3,8 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 import numpy as np
-#%%
-from .resnet1d import BaseNet
 
 # Residual Block
 class ResBlock(nn.Module):
@@ -89,7 +87,7 @@ class CNNEncoder2D_SLEEP(nn.Module):
         return torch.cat([torch.log(torch.abs(signal1) + 1e-8), torch.log(torch.abs(signal2) + 1e-8)], dim=1) # (B, 4, H, W)
         # 0, 1 for 1st channel, 2, 3 for 2nd channel
 
-    def forward(self, x, simsiam=False, mid=False, byol=False, sup=False):
+    def forward(self, x, simsiam=False, mid= True, byol=False, sup=False):
         # Inputs -> (B, 2, 3000)
         x = self.torch_stft(x)
         x = self.conv1(x)
@@ -122,27 +120,8 @@ class encoder(nn.Module):
     def forward(self, x): 
         spect_feats = self.spect_model(x)
         return spect_feats 
-
-
-class attention(nn.Module):
-    def __init__(self,config):
-        super(attention,self).__init__()
-        self.att_dim =256
-        self.W = nn.Parameter(torch.randn(256, self.att_dim))
-        self.V = nn.Parameter(torch.randn(self.att_dim, 1))
-        self.scale = self.att_dim**-0.5
-    def forward(self,x):
-        x = x.permute(0, 2, 1)
-        e = torch.matmul(x, self.W)
-        e = torch.matmul(torch.tanh(e), self.V)
-        e = e*self.scale
-        n1 = torch.exp(e)
-        n2 = torch.sum(torch.exp(e), 1, keepdim=True)
-        alpha = torch.div(n1, n2)
-        x = torch.sum(torch.mul(alpha, x), 1)
-        return x
-
-
+    
+    
 class projection_head(nn.Module):
 
     def __init__(self,config,input_dim=256):
@@ -205,13 +184,8 @@ class contrast_loss(nn.Module):
 
         super(contrast_loss,self).__init__()
         self.model = sleep_model(config)
-        self.T = config.temperature
-        self.bn = nn.BatchNorm1d(config.tc_hidden_dim//2,affine=False)
-        self.bn2 = nn.BatchNorm1d(config.tc_hidden_dim//2,affine=False)
+        self.T = config.temperature     
         self.bs = config.batch_size
-        self.lambd = 0.05
-        self.mse = nn.MSELoss(reduction='mean')
-        self.wandb = config.wandb
 
     def loss(self,out_1,out_2):
         # L2 normalize
@@ -235,8 +209,6 @@ class contrast_loss(nn.Module):
         #pos = torch.exp(torch.sum(out_1*out_2, dim=-1))
         pos = torch.cat([pos, pos], dim = 0) # 2B
         loss = -torch.log(pos / neg).mean()
-
-
         return loss
 #%%
     def intra_loss(self,weak_time,weak_spect,strong_time,strong_spect):

@@ -14,7 +14,6 @@ class Config(object):
         self.ft_mod = 'eeg'
 
         self.dropout = 0.2
-        self.features_len  = 190 
 
         self.degree = 0.05
         self.permutation_segments = 3
@@ -22,7 +21,6 @@ class Config(object):
         self.mask_max_points = 200
         self.mask_min_points = 50 
 
-        self.final_out_channels = 128
 
         # time domain resnet parameters
         self.kernel_size_stem =7 
@@ -33,20 +31,8 @@ class Config(object):
         self.in_channels = 1
         self.num_classes = 5
 
-        self.dc_max = 5 
-        self.dc_min = -5
-
-        # encoder and tc transformer parameters
-        self.patch_size_tfr = 128 
-
-        self.dim_tfr = 64
-        self.depth_tfr = 3
-        self.heads_tfr = 4
-        self.mlp_dim_tfr = 64 * 4
-        self.dropout_tfr = 0.35 
-
         # loss parameters
-        self.temperature = 1
+        self.temperature = 5
         self.use_cosine_similarity = True
 
         # optimizer paramters

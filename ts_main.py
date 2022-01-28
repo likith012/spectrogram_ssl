@@ -10,7 +10,6 @@ from data_preprocessing.dataloader import data_generator,cross_data_generator,ft
 from trainer import sleep_ft,sleep_pretrain
 from config import Config
 
-#path = "/scratch/SLEEP_data/data_multi/sleepEDF/"
 path = "/scratch/SLEEP_data/"
 
 
